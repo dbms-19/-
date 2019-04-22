@@ -21,11 +21,39 @@
 
 **因为写入完后，fclose并没有将数据刷新到磁盘上，而是将数据刷新到存储介质，fflush函数只是把数据从CLib buffer拷贝到page cache中，并没有刷新到磁盘上，所以调用fsync函数可以将数据刷新到磁盘上**
 
-通过以上解释，得到如下示意图：
+通过以上解释，得到如下示意图，内核中分页，即page：
+
+![image](https://github.com/dbms-19/First-part/blob/master/pic/%E9%A2%981%E7%A4%BA%E6%84%8F%E5%9B%BE2.jpg)
 
 ### 简述文件映射的方式如何操作文件。与普通IO区别？为什么写入完成后要调用msync？文件内容什么时候被载入内存？
-(使用什么函数，函数的工作流程)  
-XXXXXX
+通过博客 https://www.cnblogs.com/alantu2018/p/8506381.html 和 https://blog.csdn.net/mengxingyuanlove/article/details/50986092
+
+**void mmap(void *addr, size_t len, int prot,int flags, int fildes, off_t off) // mmap的作用是映射文件描述符和指定文件的(off_t off)区域至调用进程的(addr,addr *len)的内存区域**
+mmap返回的是用户进程空间的虚拟地址，在stack和heap 之间的空闲逻辑空间(虚拟空间) 就是用来提供映射的，文件将会被映射到这一区域的某块虚拟内存上，具体哪一块若是用户没有指定，则由内核来分配。一般上，用户不该去指定这个映射的起始地址，因为栈和堆都是在向块区域进行扩展的，所以这块区域的大小会一直在变化，若是用户指定，用户根本就无法知道这块地址是否被堆用去了还是被栈用去了。
+
+**int msync(void *addr, size_t len, int flags) // 进程在映射空间的对共享内容的改变写回到磁盘文件中**
+
+**int munmap(void *addr, size_t len) // 释放存储映射区，此“冲洗”非彼冲洗，不同于用户缓冲区，此时的冲洗不会洗掉映射存储区的内容，会保留，此冲洗更像是复制写入文件的同步！**
+
+**内存映射步骤：**
+ - 用open系统调用打开文件, 并返回描述符fd.
+ - 用mmap建立内存映射, 并返回映射首地址指针start.
+ - 对映射(文件)进行各种操作, 显示(printf), 修改(sprintf).
+ - 用munmap(void *start, size_t lenght)关闭内存映射.
+ - 用close系统调用关闭文件fd（只要保证在mmap成功了之后就都可以）.
+ - msync
+ 
+ **注意事项**
+ 在修改映射的文件时, 只能在原长度上修改, 不能增加文件长度, 因为内存是已经分配好的.
+
+在如图过程3时，文件内容载入内存。
+- 过程1，内存映射。
+- 过程2，mmap()会返回一个指针ptr，它指向进程逻辑地址空间中的一个地址，这样以后，进程无需再调用read或write对文件进行读写，而只需要通过ptr就能够操作文件。但是ptr所指向的是一个逻辑地址，要操作其中的数据，必须通过MMU将逻辑地址转换成物理地址，这个过程与内存映射无关。**
+- 过程3：建立内存映射并没有实际拷贝数据，这时，MMU在地址映射表中是无法找到与ptr相对应的物理地址的，也就是MMU失败，将产生一个缺页中断，缺页中断的中断响应函数会在swap中寻找相对应的页面，如果找不到（也就是该文件从来没有被读入内存的情况），则会通过mmap()建立的映射关系，从硬盘上将文件读取到物理内存中，这个过程与内存映射无关
+- 过程4：如果在拷贝数据时，发现物理内存不够用，则会通过虚拟内存机制（swap）将暂时不用的物理页面交换到硬盘上，这个过程也与内存映射无关。
+
+![image](https://github.com/dbms-19/First-part/blob/master/pic/%E9%A2%98%E7%9B%AE2.jpg)
+
 
 ### 参考[Intel的NVM模拟教程](https://software.intel.com/zh-cn/articles/how-to-emulate-persistent-memory-on-an-intel-architecture-server)模拟NVM环境，用fio等工具测试模拟NVM的性能并与磁盘对比（关键步骤结果截图）。
 （推荐Ubuntu 18.04LTS下配置，跳过内核配置，编译和安装步骤）
