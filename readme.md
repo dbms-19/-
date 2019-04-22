@@ -26,6 +26,7 @@
 ![image](https://github.com/dbms-19/First-part/blob/master/pic/%E9%A2%981%E7%A4%BA%E6%84%8F%E5%9B%BE2.jpg)
 
 ### 简述文件映射的方式如何操作文件。与普通IO区别？为什么写入完成后要调用msync？文件内容什么时候被载入内存？
+通过博客https://www.cnblogs.com/volcao/p/8818199.html 和 https://www.cnblogs.com/alantu2018/p/8506381.html
 函数：
 - void mmap(void *addr, size_t len, int prot,int flags, int fildes, off_t off) mmap的作用是映射文件描述符和指定文件的(off_t off)区域至调用进程的(addr,addr *len)的内存区域，mmap返回的是用户进程空间的虚拟地址，在stack和heap 之间的空闲逻辑空间(虚拟空间) 就是用来提供映射的，文件将会被映射到这一区域的某块虚拟内存上，具体哪一块若是用户没有指定，则由内核来分配。一般上，用户不该去指定这个映射的起始地址，因为栈和堆都是在向块区域进行扩展的，所以这块区域的大小会一直在变化，若是用户指定，用户根本就无法知道这块地址是否被堆用去了还是被栈用去了。
 - int msync(void *addr, size_t len, int flags) 进程在映射空间的对共享内容的改变写回到磁盘文件中，此“冲洗”非彼冲洗，不同于用户缓冲区，此时的冲洗不会洗掉映射存储区的内容，会保留，此冲洗更像是复制写入文件的同步，这也是写入完成后要调用msync的原因，要写入磁盘中。
