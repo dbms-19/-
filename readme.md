@@ -60,7 +60,7 @@
 ### 使用[PMDK的libpmem库](http://pmem.io/pmdk/libpmem/)编写样例程序操作模拟NVM（关键实验结果截图，附上编译命令和简单样例程序）。
 （样例程序使用教程的即可，主要工作是编译安装并链接PMDK库）
 （编译安装PMDK库的过程太过冗长，以至于没有截图，但是有成功运行的截图表明成功安装了PMDK库）
- ![image](/pic/libpmem.png)
+ ![image](/pic/lbpmem.png)
  
 
 ---
