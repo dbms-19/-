@@ -59,6 +59,54 @@
 
 ### 使用[PMDK的libpmem库](http://pmem.io/pmdk/libpmem/)编写样例程序操作模拟NVM（关键实验结果截图，附上编译命令和简单样例程序）。
 （样例程序使用教程的即可，主要工作是编译安装并链接PMDK库）<br/>
+ 安装PMDK步骤：
+1. 先安装NDCTL
+   - 查询存储库以确定是否使用aptitude，apt-cache或apt实用程序传递ndctl
+     + $ aptitude search ndctl 
+     + $ apt-cache search ndctl 
+     + $ apt search ndctl
+   - 验证当前是否安装了ndctl软件包并检查版本
+     + $ apt list --installed ndctl
+   - 安装ndctl软件包或更新已安装的软件包
+     + $ sudo apt-get install ndctl
+   - 安装依赖包
+     + $ sudo apt install -y git gcc g++ autoconf automake asciidoc asciidoctor 
+       bash-completion xmlto libtool pkg-config libglib2.0-0 libglib2.0-dev libfabric1 
+       libfabric-dev doxygen graphviz pandoc libncurses5 libkmod2 libkmod-dev 
+       libudev-dev uuid-dev libjson-c-dev libkeyutils-dev
+   - 克隆GitHub存储库
+     + $ git config --global http.proxy http://proxyUsername:proxyPassword@proxy.server.com:port
+     + $ git config --global https.proxy https://proxyUsername:proxyPassword@proxy.server.com:port
+     + $ sudo chmod +w /downloads
+     + $ cd /downloads
+     + $ sudo git clone https://github.com/pmem/ndctl
+     + $ cd ndctl
+   - 建立
+     + $ ./autogen.sh
+     + $ ./configure CFLAGS='-g -O2' --prefix=/usr/local --sysconfdir=/etc --libdir=/usr/local/lib64
+     + $ make
+     + 构建调试版本:
+     + $ ./autogen.sh
+     + $ ./configure CFLAGS='-g -O2' --enable-debug --prefix=/usr/local --sysconfdir=/etc --libdir=/usr/local/lib64  
+     + $ make
+   - 安装
+     + $ sudo make install
+2. 安装PMDK库
+   - 编译器要求
+     + $ sudo dnf install gcc gcc-c++
+     + $ sudo apt install gcc g++
+   - 克隆github
+     + $ sudo chmod +w /downloads
+     + $ cd /downloads
+     + $ git clone https://github.com/pmem/pmdk
+     + $ cd pmdk
+   - 编译
+     + $ make
+     + $ make CC=clang CXX=clang++
+   - 安装
+     + $ sudo make install
+     + $ sudo make install prefix=/usr/local
+     
 （编译安装PMDK库的过程太过冗长，以至于没有截图，但是有成功运行的截图表明成功安装了PMDK库）
  ![image](/pic/lbpmem.png)
  <br/>
