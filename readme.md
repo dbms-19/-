@@ -55,6 +55,7 @@
 
 ### 参考[Intel的NVM模拟教程](https://software.intel.com/zh-cn/articles/how-to-emulate-persistent-memory-on-an-intel-architecture-server)模拟NVM环境，用fio等工具测试模拟NVM的性能并与磁盘对比（关键步骤结果截图）。
 （推荐Ubuntu 18.04LTS下配置，跳过内核配置，编译和安装步骤）
+![image](https://www.baidu.com)
 
 ### 使用[PMDK的libpmem库](http://pmem.io/pmdk/libpmem/)编写样例程序操作模拟NVM（关键实验结果截图，附上编译命令和简单样例程序）。
 （样例程序使用教程的即可，主要工作是编译安装并链接PMDK库）
