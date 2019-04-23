@@ -59,6 +59,7 @@
 
 ### 使用[PMDK的libpmem库](http://pmem.io/pmdk/libpmem/)编写样例程序操作模拟NVM（关键实验结果截图，附上编译命令和简单样例程序）。
 （样例程序使用教程的即可，主要工作是编译安装并链接PMDK库）<br/>
+（安装教程：https://docs.pmem.io/getting-started-guide/installing-pmdk/compiling-pmdk-from-source）<br/>
  安装PMDK步骤：
 1. 先安装NDCTL
    - 查询存储库以确定是否使用aptitude，apt-cache或apt实用程序传递ndctl
@@ -107,7 +108,7 @@
      + $ sudo make install
      + $ sudo make install prefix=/usr/local
      
-（编译安装PMDK库的过程太过冗长，以至于没有截图，但是有成功运行的截图表明成功安装了PMDK库）
+<br/>（编译安装PMDK库的过程太过冗长，以至于没有截图，但是有成功运行的截图表明成功安装了PMDK库）<br/>
  ![image](/pic/lbpmem.png)
  <br/>
  ```php
